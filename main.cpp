@@ -7,11 +7,20 @@ private:
 	int numerator_;
 	int denominator_;
 
+
 public:
 	Fraction(int numerator, int denominator)
 	{
 		numerator_ = numerator;
 		denominator_ = denominator;
+		int gcd_value = gcd(std::abs(numerator_), std::abs(denominator_));
+		numerator_ /= gcd_value;
+		denominator_ /= gcd_value;
+		if (denominator_ < 0)
+		{
+			numerator_ = -numerator_;
+			denominator_ = -denominator_;
+		}
 	}
 
 	int get_numerator() const
@@ -31,7 +40,7 @@ public:
 
 	bool operator!=(const Fraction& other) const
 	{
-		return numerator_ != other.numerator_ || denominator_ != other.denominator_;
+		return (!(*this == other));
 	}
 
 	bool operator<(const Fraction& other) const
@@ -41,17 +50,17 @@ public:
 
 	bool operator>(const Fraction& other) const
 	{
-		return numerator_ * other.denominator_ > other.numerator_ * denominator_;
+		return (other < *this);
 	}
 
 	bool operator<=(const Fraction& other) const
 	{
-		return numerator_ * other.denominator_ <= other.numerator_ * denominator_;
+		return !(*this > other);
 	}
 
 	bool operator>=(const Fraction& other) const
 	{
-		return numerator_ * other.denominator_ >= other.numerator_ * denominator_;
+		return !(*this < other);
 	}
 
 	Fraction operator+(const Fraction& other) const
@@ -117,12 +126,6 @@ public:
 	{
 		return b == 0 ? a : gcd(b, a % b);
 	}
-	Fraction should_reduce() const
-	{
-		int gcd_value = gcd(numerator_, denominator_);
-    	return Fraction(numerator_ / gcd_value, denominator_ / gcd_value);
-	}
-
 };
 
 int main()
@@ -136,6 +139,12 @@ int main()
 	std::cout << "f1" << ((f1 > f2) ? " > " : " not > ") << "f2" << '\n';
 	std::cout << "f1" << ((f1 <= f2) ? " <= " : " not <= ") << "f2" << '\n';
 	std::cout << "f1" << ((f1 >= f2) ? " >= " : " not >= ") << "f2" << '\n';
+
+
+	Fraction ff(3, 4);
+	Fraction fff(4, 5);
+
+	std::cout << ff.get_numerator() << '/' << ff.get_denominator() << "-" << fff.get_numerator() << '/' << fff.get_denominator() << " = " << (ff - fff).get_numerator() << '/' << (ff - fff).get_denominator() << '\n';
 
 	int a {};
 	int b {};
@@ -151,13 +160,15 @@ int main()
 	std::cin >> b;
 	Fraction f4(a, b);
 
-	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "+" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 + f4).should_reduce().get_numerator() << '/' << (f3 + f4).should_reduce().get_denominator() << '\n';
-	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "-" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 - f4).should_reduce().get_numerator() << '/' << (f3 - f4).should_reduce().get_denominator() << '\n';
-	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "*" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 * f4).should_reduce().get_numerator() << '/' << (f3 * f4).should_reduce().get_denominator() << '\n';
-	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "/" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 / f4).should_reduce().get_numerator() << '/' << (f3 / f4).should_reduce().get_denominator() << '\n';
-	std::cout << "++" << f3.get_numerator() << '/' << f3.get_denominator() << " * " << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (++f3 * f4).should_reduce().get_numerator() << '/' << (f3 * f4).should_reduce().get_denominator() << '\n';
-	std::cout << "Значение дроби 1: " << f3.should_reduce().get_numerator() << '/' << f3.should_reduce().get_denominator() << '\n';
-	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "-- * " << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3-- * f4).should_reduce().get_numerator() << '/' << (f3 * f4).should_reduce().get_denominator() << '\n';
-	std::cout << "Значение дроби 1: " << f3.should_reduce().get_numerator() << '/' << f3.should_reduce().get_denominator() << '\n';
+	
+
+	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "+" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 + f4).get_numerator() << '/' << (f3 + f4).get_denominator() << '\n';
+	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "-" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 - f4).get_numerator() << '/' << (f3 - f4).get_denominator() << '\n';
+	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "*" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 * f4).get_numerator() << '/' << (f3 * f4).get_denominator() << '\n';
+	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "/" << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3 / f4).get_numerator() << '/' << (f3 / f4).get_denominator() << '\n';
+	std::cout << "++" << f3.get_numerator() << '/' << f3.get_denominator() << " * " << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (++f3 * f4).get_numerator() << '/' << (f3 * f4).get_denominator() << '\n';
+	std::cout << "Значение дроби 1: " << f3.get_numerator() << '/' << f3.get_denominator() << '\n';
+	std::cout << f3.get_numerator() << '/' << f3.get_denominator() << "-- * " << f4.get_numerator() << '/' << f4.get_denominator() << " = " << (f3-- * f4).get_numerator() << '/' << (f3 * f4).get_denominator() << '\n';
+	std::cout << "Значение дроби 1: " << f3.get_numerator() << '/' << f3.get_denominator() << '\n';
 	return 0;
 }
